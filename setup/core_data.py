@@ -669,26 +669,6 @@ def parse_wild_mons(config):
     return wild_mons
 
 
-def parse_type_icon_palette_slots(config):
-    """
-    Parses the type icon OAM palette slot mappings.
-    """
-    filepath = os.path.join(config["project_dir"], "src/pokemon_summary_screen.c")
-    ast = parse_ast_from_file(filepath, config["project_dir"])
-
-    icon_palette_slots = get_declaration_from_ast(ast, "sMoveTypeToOamPaletteNum")
-    if icon_palette_slots == None:
-        raise Exception("Failed to read mon tm/hm moves from %s" % filepath)
-
-    result = {}
-    for item in icon_palette_slots.init.exprs:
-        if type(item.name[0]) == Constant:
-            type_id = item.name[0].value
-            palette_slot = item.expr.value
-            result[type_id] = palette_slot
-
-    return result
-
 
 project_data = {
     "mon_base_stats": {
@@ -795,10 +775,6 @@ project_data = {
         "func": parse_species_defines,
         "cache_file": "species_defines.pickle"
     },
-    "type_icon_palette_slots": {
-        "func": parse_type_icon_palette_slots,
-        "cache_file": "type_icon_palette_slots.pickle"
-    },
 }
 
 
@@ -853,7 +829,6 @@ def load_core_data(config):
     region_map_sections = load_data("region_map_sections", config)
     wild_mons = load_data("wild_mons", config)
     species_to_id, id_to_species = load_data("species_defines", config)
-    type_icon_palette_slots = load_data("type_icon_palette_slots", config)
     return {
         "mon_base_stats": mon_base_stats,
         "mon_dex_enums": mon_dex_enums,
@@ -884,5 +859,4 @@ def load_core_data(config):
         "wild_mons": wild_mons,
         "species_to_id": species_to_id,
         "id_to_species": id_to_species,
-        "type_icon_palette_slots": type_icon_palette_slots,
     }

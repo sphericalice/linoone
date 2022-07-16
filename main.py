@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # Load program config.
     config = {}
     config["project_dir"] = args.project_dir
-    config["website_title"] = "pokeemerald"
+    config["website_title"] = "pokegaia"
     config["dist_dir"] = os.path.join(os.path.dirname(os.path.realpath(__file__)), "dist")
     config["base_url"] = None
 
