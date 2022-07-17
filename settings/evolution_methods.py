@@ -220,7 +220,7 @@ class EvolutionMethodSettings:
         }
 
 
-    def get_label(self, method, param, items, move_names, region_map_sections, region_map_section_ids, mon_species_names, maps, map_ids):
+    def get_label(self, method, param, items, move_names, region_map_sections, region_map_section_ids, mon_species_names, maps, map_ids, type_names):
         """
         Builds the human-friendly label of the evolution method.
         """
@@ -239,7 +239,7 @@ class EvolutionMethodSettings:
             elif evo_method["param_type"] == EvolutionParamTypes.move:
                 return "%s %s" % (evo_method["description"], move_names[param])
             elif evo_method["param_type"] == EvolutionParamTypes.type:
-                return "%s %s-type move" % (evo_method["description"], param) # TODO
+                return "%s %s-type move" % (evo_method["description"], type_names[param])
             elif evo_method["param_type"] == EvolutionParamTypes.mapsec:
                 return "%s %s" % (evo_method["description"], region_map_sections[region_map_section_ids[param]]["name"])
             elif evo_method["param_type"] == EvolutionParamTypes.mon:
