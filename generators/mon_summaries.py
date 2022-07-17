@@ -124,7 +124,8 @@ class MonSummariesGenerator(BaseGenerator):
         visited.add(initial_species)
         for evo in evolution_map[initial_species]["from"]:
             species = evo["species"]
-            edge_name = "%s:%s" % (species, initial_species)
+            method = evo["method"]
+            edge_name = "%s -%s-> %s" % (species, method, initial_species)
             if edge_name not in edges:
                 self.add_species_node(dot, species)
                 self.add_species_edge(dot, species, initial_species, evo)
@@ -133,7 +134,8 @@ class MonSummariesGenerator(BaseGenerator):
 
         for evo in evolution_map[initial_species]["to"]:
             species = evo["species"]
-            edge_name = "%s:%s" % (initial_species, species)
+            method = evo["method"]
+            edge_name = "%s -%s-> %s" % (initial_species, method, species)
             if edge_name not in edges:
                 self.add_species_node(dot, species)
                 self.add_species_edge(dot, initial_species, species, evo)
