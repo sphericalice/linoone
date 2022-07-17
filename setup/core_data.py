@@ -103,7 +103,10 @@ def parse_dex_entries(config):
                 # Use the actual text for the pokedex description field, not the
                 # reference symbol name.
                 mon_text = get_declaration_from_ast(ast, field_value)
-                field_value = mon_text.init.args.exprs[0].value.strip("\"")
+                if type(mon_text.init) == Constant:
+                    field_value = mon_text.init.value.strip("\"")
+                else:
+                    field_value = mon_text.init.args.exprs[0].value.strip("\"")
 
             result[dex_num][field_name] = field_value
 
@@ -130,8 +133,8 @@ def parse_levelup_learnsets(config):
             if type(level_up_move) == Constant:
                 continue
 
-            level = level_up_move.left.left.value
-            move = level_up_move.right.value
+            move = level_up_move.exprs[0].expr.value
+            level = level_up_move.exprs[1].expr.value
             result[species].append({"level": level, "move": move})
 
         result[species] = sorted(result[species], key=lambda item: int(item["level"]))
@@ -168,12 +171,12 @@ def get_tmhms_from_expr(expr, tmhm_learnset):
 
     # This is the base case leaf node.
     if type(expr.left) == Cast:
-        tmhm = expr.right.left.value
+        tmhm = expr.right.left.left.value
         tmhm_learnset.append(tmhm)
         return tmhm_learnset
 
     tmhm_learnset = get_tmhms_from_expr(expr.left, tmhm_learnset)
-    tmhm = expr.right.right.left.value
+    tmhm = expr.right.right.left.left.value
     tmhm_learnset.append(tmhm)
     return tmhm_learnset
 
@@ -379,7 +382,7 @@ def parse_move_descriptions(config):
 
     result = {}
     for item in move_descriptions.init.exprs:
-        move = item.name[0].left.value
+        move = item.name[0].value
         move_description = get_declaration_from_ast(ast, item.expr.name)
         description = move_description.init.args.exprs[0].value.strip("\"")
         result[move] = description
@@ -407,8 +410,35 @@ def parse_nature_names(config):
 
     return result
 
+def parse_constant_int(expr) -> int:
+    if type(expr) == Constant:
+        try:
+            try:
+                return int(expr.value)
+            except:
+                return int(expr.value, 16)
+        except ValueError:
+            raise Exception(f"Failed to parse {expr} as an int literal")
+    if type(expr) == BinaryOp:
+        lhs = parse_constant_int(expr.left)
+        rhs = parse_constant_int(expr.right)
+        if expr.op == "+":
+            return lhs + rhs
+        if expr.op == "-":
+            return lhs - rhs
+        if expr.op == "*":
+            return lhs * rhs
+        if expr.op == "<<":
+            return lhs << rhs
+        if expr.op == ">>":
+            return lhs >> rhs
+        if expr.op == "|":
+            return lhs | rhs
+        if expr.op == "&":
+            return lhs & rhs
+    raise Exception(f"Failed to parse {expr}")
 
-def parse_evolutions(config):
+def parse_mon_evolutions(config):
     """
     Parses and returns the project's mon evolution definitions.
     """
@@ -424,9 +454,9 @@ def parse_evolutions(config):
         species = item.name[0].value
         result[species] = []
         for evolution in item.expr.exprs:
-            method = evolution.exprs[0].value
-            param = evolution.exprs[1].value
-            dest_species = evolution.exprs[2].value
+            method = str(parse_constant_int(evolution.exprs[0]))
+            param = str(parse_constant_int(evolution.exprs[1]))
+            dest_species = str(parse_constant_int(evolution.exprs[2]))
             result[species].append({"method": method, "param": param, "dest_species": dest_species})
 
     return result
@@ -449,11 +479,10 @@ def parse_species_mapping(config):
     species_to_national = {}
     national_to_species = {}
     for item in mappings.init.exprs:
-        if type(item.expr) == ID:
-            species = item.name[0].left.value
-            national = dex_enums[item.expr.name]
-            species_to_national[species] = national
-            national_to_species[national] = species
+        species = item.name[0].left.value
+        national = dex_enums[item.expr.name]
+        species_to_national[species] = national
+        national_to_species[national] = species
 
     return species_to_national, national_to_species
 
@@ -491,7 +520,7 @@ def parse_mon_front_pics(config):
     """
     Parses and returns the project's mon specified pics.
     """
-    return parse_mon_gfx(config, "gMonFrontPicTable", "src/data.c", "src/anim_mon_front_pics.c")
+    return parse_mon_gfx(config, "gMonFrontPicTable", "src/data.c", "src/graphics.c")
 
 
 def parse_mon_back_pics(config):
@@ -592,6 +621,19 @@ def parse_maps(config):
     return maps
 
 
+def parse_map_ids(config):
+    """
+    Parses and returns the project's map IDs.
+    """
+    map_ids = parse_defines(config, "include/constants/map_groups.h", "MAP_")
+
+    eval_map_ids = {}
+    for map_id in map_ids:
+        eval_map_ids[eval(map_id)] = map_ids[map_id]
+
+    return eval_map_ids
+
+
 def parse_region_map_sections(config):
     """
     Parses and returns the project's region map entries.
@@ -605,8 +647,10 @@ def parse_region_map_sections(config):
 
     mapsec_ids = parse_defines(config, "include/constants/region_map_sections.h", "MAPSEC_")
     result = {}
+    val_to_ids = {}
     for item in region_map_entries.init.exprs:
         mapsec = mapsec_ids[item.name[0].value]
+        val_to_ids[item.name[0].value] = mapsec
         map_name_label = item.expr.exprs[4].name
         map_name_decl = get_declaration_from_ast(ast, map_name_label)
         map_name = map_name_decl.init.args.exprs[0].value.strip("\"")
@@ -618,7 +662,7 @@ def parse_region_map_sections(config):
             'name': map_name,
         }
 
-    return result
+    return result, val_to_ids
 
 
 def parse_defines(config, filepath, prefix=None):
@@ -704,7 +748,7 @@ project_data = {
         "cache_file": "mon_species_names.pickle"
     },
     "mon_evolutions": {
-        "func": parse_evolutions,
+        "func": parse_mon_evolutions,
         "cache_file": "mon_evolutions.pickle"
     },
     "species_maps": {
@@ -762,6 +806,10 @@ project_data = {
     "maps": {
         "func": parse_maps,
         "cache_file": "maps.pickle"
+    },
+    "map_ids": {
+        "func": parse_map_ids,
+        "cache_file": "map_ids.pickle"
     },
     "region_map_sections": {
         "func": parse_region_map_sections,
@@ -826,7 +874,8 @@ def load_core_data(config):
     move_names = load_data("move_names", config)
     items = load_data("items", config)
     maps = load_data("maps", config)
-    region_map_sections = load_data("region_map_sections", config)
+    map_ids = load_data("map_ids", config)
+    region_map_sections, region_map_section_ids = load_data("region_map_sections", config)
     wild_mons = load_data("wild_mons", config)
     species_to_id, id_to_species = load_data("species_defines", config)
     return {
@@ -855,7 +904,9 @@ def load_core_data(config):
         "move_names": move_names,
         "items": items,
         "maps": maps,
+        "map_ids": map_ids,
         "region_map_sections": region_map_sections,
+        "region_map_section_ids": region_map_section_ids,
         "wild_mons": wild_mons,
         "species_to_id": species_to_id,
         "id_to_species": id_to_species,

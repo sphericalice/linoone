@@ -88,12 +88,15 @@ def create_tmhm_move_map(mon_tmhm_learnsets, item_to_move, national_to_species):
     result = {}
     for national_num in national_to_species:
         species = national_to_species[national_num]
-        for item_id in mon_tmhm_learnsets[species]:
-            move = item_to_move[item_id]
-            if move not in result:
-                result[move] = []
+        try:
+            for item_id in mon_tmhm_learnsets[species]:
+                move = item_to_move[item_id]
+                if move not in result:
+                    result[move] = []
 
-            result[move].append(national_num)
+                result[move].append(national_num)
+        except:
+            continue
 
     for move in result:
         result[move] = sorted(result[move], key=int)

@@ -3,6 +3,7 @@ import os
 import re
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from varname import nameof
 
 from setup.core_data import load_core_data
 from setup.core_funcs import load_core_funcs
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     config["project_dir"] = args.project_dir
     config["website_title"] = "pokegaia"
     config["dist_dir"] = os.path.join(os.path.dirname(os.path.realpath(__file__)), "dist")
-    config["base_url"] = None
+    config["base_url"] = "D:\Haroun\Documents\ROM Hacking Tools\Decompilations\linoone\dist"
 
     # Load core data and functions to be used by generators and their templates.
     core_data = load_core_data(config)

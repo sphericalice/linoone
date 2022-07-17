@@ -7,7 +7,7 @@ import os
 import io
 from subprocess import check_output
 
-from pycparser.c_ast import Decl
+from pycparser.c_ast import Decl, Constant
 from pycparser.c_parser import CParser
 
 
@@ -70,7 +70,10 @@ def parse_names(filepath, declaration_name, project_path):
     result = {}
     for item in arr.init.exprs:
         key = item.name[0].value
-        name = item.expr.args.exprs[0].value.strip("\"")
+        if type(item.expr) == Constant:
+            name = item.expr.value.strip("\"")
+        else:
+            name = item.expr.args.exprs[0].value.strip("\"")
         result[key] = name
 
     return result

@@ -164,9 +164,8 @@ class MonSummariesGenerator(BaseGenerator):
             **extra_args
         )
 
-
     def add_species_edge(self, dot, from_species, to_species, evo):
-        evo_description = self.project_settings["evolution_methods"].get_label(evo["method"], evo["param"], self.core_data["items"])
+        evo_description = self.project_settings["evolution_methods"].get_label(evo["method"], evo["param"], self.core_data["items"], self.core_data["move_names"], self.core_data["region_map_sections"], self.core_data["region_map_section_ids"], self.core_data["mon_species_names"], self.core_data["maps"], self.core_data["map_ids"])
         dot.edge(from_species, to_species, label=" %s" % evo_description)
 
 

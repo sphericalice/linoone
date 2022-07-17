@@ -9,67 +9,83 @@ from enum import Enum
 # determined from source files inspection.
 class TypesSettings:
     def __init__(self):
-        self.types = {
-            "0": {
-                "icon_filepath": "graphics/types/normal.png",
+        self.coords = {
+            "0": { # Normal
+                "x": "0",
+                "y": "0",
             },
-            "1": {
-                "icon_filepath": "graphics/types/fight.png",
+            "1": { # Fighting
+                "x": "1",
+                "y": "2",
             },
-            "2": {
-                "icon_filepath": "graphics/types/flying.png",
+            "2": { # Flying
+                "x": "0",
+                "y": "2",
             },
-            "3": {
-                "icon_filepath": "graphics/types/poison.png",
+            "3": { # Poison
+                "x": "0",
+                "y": "3",
             },
-            "4": {
-                "icon_filepath": "graphics/types/ground.png",
+            "4": { # Ground
+                "x": "2",
+                "y": "1",
             },
-            "5": {
-                "icon_filepath": "graphics/types/rock.png",
+            "5": { # Rock
+                "x": "1",
+                "y": "1",
             },
-            "6": {
-                "icon_filepath": "graphics/types/bug.png",
+            "6": { # Bug
+                "x": "3",
+                "y": "2",
             },
-            "7": {
-                "icon_filepath": "graphics/types/ghost.png",
+            "7": { # Ghost
+                "x": "2",
+                "y": "2",
             },
-            "8": {
-                "icon_filepath": "graphics/types/steel.png",
+            "8": { # Steel
+                "x": "2",
+                "y": "3",
             },
-            "9": {
-                "icon_filepath": "graphics/types/mystery.png",
+            "9": { # Mystery
+                "x": "1",
+                "y": "4",
             },
-            "10": {
-                "icon_filepath": "graphics/types/fire.png",
+            "10": { # Fire
+                "x": "1",
+                "y": "0",
             },
-            "11": {
-                "icon_filepath": "graphics/types/water.png",
+            "11": { # Water
+                "x": "2",
+                "y": "0",
             },
-            "12": {
-                "icon_filepath": "graphics/types/grass.png",
+            "12": { # Grass
+                "x": "3",
+                "y": "0",
             },
-            "13": {
-                "icon_filepath": "graphics/types/electric.png",
+            "13": { # Electric
+                "x": "0",
+                "y": "1",
             },
-            "14": {
-                "icon_filepath": "graphics/types/psychic.png",
+            "14": { # Psychic
+                "x": "1",
+                "y": "3",
             },
-            "15": {
-                "icon_filepath": "graphics/types/ice.png",
+            "15": { # Ice
+                "x": "3",
+                "y": "1",
             },
-            "16": {
-                "icon_filepath": "graphics/types/dragon.png",
+            "16": { # Dragon
+                "x": "0",
+                "y": "4",
             },
-            "17": {
-                "icon_filepath": "graphics/types/dark.png",
+            "17": { # Dark
+                "x": "3",
+                "y": "3",
             },
-        }
-        # Maps the in-game OAM palette slot to the move_types_*.pal files.
-        self.palette_slot_files = {
-            "13": "move_types_1.pal",
-            "14": "move_types_2.pal",
-            "15": "move_types_3.pal",
+            "18": { # Fairy
+                "x": "2",
+                "y": "4",
+            },
         }
 
 
