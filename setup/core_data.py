@@ -410,6 +410,7 @@ def parse_nature_names(config):
 
     return result
 
+
 def parse_constant_int(expr) -> int:
     if type(expr) == Constant:
         try:
@@ -437,6 +438,7 @@ def parse_constant_int(expr) -> int:
         if expr.op == "&":
             return lhs & rhs
     raise Exception(f"Failed to parse {expr}")
+
 
 def parse_mon_evolutions(config):
     """
@@ -481,8 +483,10 @@ def parse_species_mapping(config):
     for item in mappings.init.exprs:
         species = item.name[0].left.value
         national = dex_enums[item.expr.name]
+        # Do not let forms overwrite their base version
+        if national not in national_to_species:
+            national_to_species[national] = species
         species_to_national[species] = national
-        national_to_species[national] = species
 
     return species_to_national, national_to_species
 
