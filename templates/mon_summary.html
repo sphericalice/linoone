@@ -126,7 +126,11 @@
   <tbody>
     {% for item in mon_learnsets[species] %}
     <tr>
+      {% if item["level"] == "0" %}
+      <td>Evo</td>
+      {% else %}
       <td>{{ item["level"] }}</td>
+      {% endif %}
       {{ macros.move_table_entry_standard(item['move']) }}
     </tr>
     {% endfor %}

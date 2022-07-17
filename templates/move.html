@@ -44,7 +44,11 @@
       {% set level = item['level'] %}
       <tr>
         {{ macros.mon_table_entry_standard(national_num) }}
-        <td>at level {{ level }}</td>
+        {% if level == "0" %}
+        <td>upon evolving</td>
+        {% else %}
+        <td>at Lv. {{ level }}</td>
+        {% endif %}
       </tr>
     {% endfor %}
   </tbody>
