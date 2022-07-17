@@ -530,6 +530,13 @@ def parse_mon_back_pics(config):
     return parse_mon_gfx(config, "gMonBackPicTable", "src/data.c", "src/graphics.c")
 
 
+def parse_mon_palettes(config):
+    """
+    Parses and returns the project's mon palettes.
+    """
+    return parse_mon_gfx(config, "gMonPaletteTable", "src/data.c", "src/graphics.c")
+
+
 def parse_mon_shiny_palettes(config):
     """
     Parses and returns the project's mon shiny palettes.
@@ -771,6 +778,10 @@ project_data = {
         "func": parse_mon_icon_pics,
         "cache_file": "mon_icon_pics.pickle"
     },
+    "mon_palettes": {
+        "func": parse_mon_palettes,
+        "cache_file": "mon_palettes.pickle"
+    },
     "mon_shiny_palettes": {
         "func": parse_mon_shiny_palettes,
         "cache_file": "mon_shiny_palettes.pickle"
@@ -865,6 +876,7 @@ def load_core_data(config):
     mon_front_pics = load_data("mon_front_pics", config)
     mon_back_pics = load_data("mon_back_pics", config)
     mon_icon_pics = load_data("mon_icon_pics", config)
+    mon_palettes = load_data("mon_palettes", config)
     mon_shiny_palettes = load_data("mon_shiny_palettes", config)
     ability_names = load_data("ability_names", config)
     ability_descriptions = load_data("ability_descriptions", config)
@@ -895,6 +907,7 @@ def load_core_data(config):
         "mon_front_pics": mon_front_pics,
         "mon_back_pics": mon_back_pics,
         "mon_icon_pics": mon_icon_pics,
+        "mon_palettes": mon_palettes,
         "mon_shiny_palettes": mon_shiny_palettes,
         "ability_names": ability_names,
         "ability_descriptions": ability_descriptions,

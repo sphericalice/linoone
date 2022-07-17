@@ -19,8 +19,8 @@ class MonPicsGenerator(BaseGenerator):
         """
         poke_images_dir = os.path.join(self.config["dist_dir"], "images/pokemon")
         os.makedirs(poke_images_dir, exist_ok=True)
-        self.generate_mon_pics(self.core_data["mon_front_pics"], self.core_data["species_to_national"], "front", (0, 0, 64, 64))
-        self.generate_mon_pics(self.core_data["mon_back_pics"], self.core_data["species_to_national"], "back", (0, 0, 64, 64))
+        self.generate_mon_pics(self.core_data["mon_front_pics"], self.core_data["species_to_national"], "front", (0, 0, 64, 64), self.core_data["mon_palettes"])
+        self.generate_mon_pics(self.core_data["mon_back_pics"], self.core_data["species_to_national"], "back", (0, 0, 64, 64), self.core_data["mon_palettes"])
         self.generate_shiny_mon_pics(self.core_data["mon_front_pics"], self.core_data["species_to_national"], "front", (0, 0, 64, 64), self.core_data["mon_shiny_palettes"])
         self.generate_shiny_mon_pics(self.core_data["mon_back_pics"], self.core_data["species_to_national"], "back", (0, 0, 64, 64), self.core_data["mon_shiny_palettes"])
         self.generate_mon_pics(self.core_data["mon_icon_pics"], self.core_data["species_to_national"], "icon", (0, 0, 32, 32))
@@ -29,7 +29,7 @@ class MonPicsGenerator(BaseGenerator):
         os.makedirs(type_images_dir, exist_ok=True)
         self.generate_type_pics(self.core_data["type_names"], self.project_settings["types"])
 
-    def generate_mon_pics(self, species_to_pics, species_to_national, name, crop, force=False):
+    def generate_mon_pics(self, species_to_pics, species_to_national, name, crop, mon_palettes=[], force=False):
         """
         Processes and generates the various mon images into the distribution directory.
         """
@@ -46,6 +46,11 @@ class MonPicsGenerator(BaseGenerator):
                 else:
                     img = Image.open(png_filepath)
                     cropped_img = img.crop(crop)
+                    if mon_palettes is not [] and img.mode == "P" and species in mon_palettes and os.path.exists(mon_palettes[species]) and (force or not os.path.exists(dest_filepath)):
+                        palette_filepath = re.sub(r"\.gbapal.*", ".pal", mon_palettes[species])
+                        palette = parse_jasc_file(palette_filepath)
+                        if palette is not None:
+                            cropped_img.putpalette(palette)
                     cropped_img.save(dest_filepath, transparency=0, optimize=1)
 
 
