@@ -50,27 +50,14 @@ class MapSectionsGenerator(BaseGenerator):
         """
         dest_images_dir = os.path.join(self.config["dist_dir"], "images/region_map_sections")
         os.makedirs(dest_images_dir, exist_ok=True)
-        tiles_filepath = os.path.join(self.config["project_dir"], "graphics/pokenav/region_map.png")
-        tilemap_filepath = os.path.join(self.config["project_dir"], "graphics/pokenav/region_map_map.bin")
+        tiles_filepath = os.path.join(self.config["project_dir"], "graphics/region_map_fr/region.png")
+        tilemap_filepath = os.path.join(self.config["project_dir"], "graphics/region_map_fr/orbtus.bin")
         tiles_img = Image.open(tiles_filepath)
         tiles_img_width = tiles_img.size[0] // 8
         with open(tilemap_filepath, "rb") as f:
             tilemap = bytes(f.read())
 
-        base_map_image = Image.new("P", (240, 160))
-        base_map_image.putpalette(tiles_img.getpalette())
-        for y in range(20):
-            for x in range(30):
-                tile_id = tilemap[y * 64 + x]
-                row = tile_id // tiles_img_width
-                column = tile_id % tiles_img_width
-                src_x = column * 8
-                src_y = row * 8
-                dest_x = x * 8
-                dest_y = y * 8
-                tile_img = tiles_img.crop((src_x, src_y, src_x + 8, src_y + 8))
-                base_map_image.paste(tile_img, (dest_x, dest_y))
-        base_map_image = base_map_image.convert("RGB")
+        base_map_image = Image.open(os.path.join(self.config["dist_dir"], "../settings/region_map_base.png"))
 
         for mapsec_id in region_map_sections:
             map_section = region_map_sections[mapsec_id]
@@ -78,8 +65,8 @@ class MapSectionsGenerator(BaseGenerator):
             if force or not os.path.exists(dest_filepath):
                 img = base_map_image.copy()
                 draw = ImageDraw.Draw(img)
-                pixel_x = (map_section["x"] + 1) * 8
-                pixel_y = (map_section["y"] + 2) * 8
+                pixel_x = (map_section["x"] + 4) * 8
+                pixel_y = (map_section["y"] + 4) * 8
                 width = map_section["width"] * 8
                 height = map_section["height"] * 8
                 left = pixel_x - 4
