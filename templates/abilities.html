@@ -13,7 +13,7 @@
   <tbody>
   {% for ability in sorted_abilities %}
     <tr>
-      <td><a href="{{ make_url('abilities/' + ability + '.html') }}">{{ ability_names[ability] }}</a></td>
+      <td>{% if ability != "0" %}<a href="{{ make_url('abilities/' + ability + '.html') }}">{% endif %}{{ ability_names[ability] }}{% if ability != "0" %}</a>{% endif %}</td>
       <td>{{ ability_descriptions[ability] }}</td>
     </tr>
   {% endfor %}

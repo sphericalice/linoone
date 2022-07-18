@@ -30,6 +30,8 @@ class AbilitiesGenerator(BaseGenerator):
         Generates all of the ability pages into the distribution directory.
         """
         for ability in self.core_data["ability_names"]:
+            if ability == "0":
+                continue
             self.render_template(
                 env,
                 "ability.html",
@@ -60,6 +62,12 @@ def create_ability_map(mon_base_stats, national_to_species):
         result[ability1].append(national_num)
         if ability1 != ability2:
             result[ability2].append(national_num)
+
+        if len(mon_base_stats[species]["abilities"]) > 2:
+            hiddenAbility = mon_base_stats[species]["abilities"][2]
+            if hiddenAbility not in result:
+                result[hiddenAbility] = []
+            result[hiddenAbility].append(national_num)
 
     for ability in result:
         result[ability] = sorted(result[ability], key=int)

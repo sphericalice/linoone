@@ -46,6 +46,13 @@
       {% set ability2 = mon_base_stats[species].abilities[1] %}
       <td ><a href="{{ make_url('abilities/' + ability1 + '.html') }}">{{ ability_names[ability1] }}</a>{% if ability2 != "0" and ability2 != ability1 %} / <a href="{{ make_url('abilities/' + ability2 + '.html') }}">{{ ability_names[ability2] }}</a>{% endif %}</td>
     </tr>
+    {% if mon_base_stats[species].abilities|length > 2 %}
+    <tr>
+      <td>Hidden Ability</td>
+      {% set hiddenAbility = mon_base_stats[species].abilities[2] %}
+      <td ><a href="{{ make_url('abilities/' + hiddenAbility + '.html') }}">{{ ability_names[hiddenAbility] }}</a></td>
+    </tr>
+    {% endif %}
     <tr>
       <td>Catch Rate</td>
       <td>{{ mon_base_stats[species].catchRate }}</td>
