@@ -53,17 +53,16 @@ def create_type_mons_map(type_names, mon_base_stats, national_to_species):
     type_mons_map = {}
     for national_num in national_to_species:
         species = national_to_species[national_num]
-        if "type1" in mon_base_stats[species]:
-            type1 = mon_base_stats[species]["type1"]
-            type2 = mon_base_stats[species]["type2"]
-            if type1 not in type_mons_map:
-                type_mons_map[type1] = []
-            if type2 not in type_mons_map:
-                type_mons_map[type2] = []
+        type1 = mon_base_stats[species]["type1"]
+        type2 = mon_base_stats[species]["type2"]
+        if type1 not in type_mons_map:
+            type_mons_map[type1] = []
+        if type2 not in type_mons_map:
+            type_mons_map[type2] = []
 
-            type_mons_map[type1].append(national_num)
-            if type1 != type2:
-                type_mons_map[type2].append(national_num)
+        type_mons_map[type1].append(national_num)
+        if type1 != type2:
+            type_mons_map[type2].append(national_num)
 
     for type_id in type_mons_map:
         type_mons_map[type_id] = sorted(type_mons_map[type_id], key=int)
